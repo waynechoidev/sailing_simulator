@@ -3,9 +3,24 @@
 #include <GLFW/glfw3.h>
 #include "shader_loader.h"
 
+Renderer::Renderer(const std::string &title, const int &width, const int &height,
+                   const bool isWhite)
+{
+    _title = title;
+    _width = width;
+    _height = height;
+    _isWhite = isWhite;
+
+    init(_title, _width, _height, _isWhite);
+}
+
+Renderer::Renderer()
+{
+    init(_title, _width, _height, _isWhite);
+}
+
 void Renderer::run()
 {
-    init();
 
     GLuint VertexArrayID;
     glGenVertexArrays(1, &VertexArrayID);
@@ -73,7 +88,7 @@ void Renderer::run()
     glfwTerminate();
 }
 
-void Renderer::init()
+void Renderer::init(const std::string &title, const int &width, const int &height, const bool isWhite)
 {
     // Initialise GLFW
     if (!glfwInit())
@@ -84,7 +99,7 @@ void Renderer::init()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     // Open a window and create its OpenGL context
-    _window = glfwCreateWindow(1024, 768, "Tutorial 02 - Red triangle", NULL, NULL);
+    _window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
     if (!_window)
         reportErrorAndExit(__FUNCTION__, "Window initialization");
     glfwMakeContextCurrent(_window);
@@ -98,7 +113,10 @@ void Renderer::init()
     glfwSetInputMode(_window, GLFW_STICKY_KEYS, GL_TRUE);
 
     // Dark blue background
-    glClearColor(0.0f, 0.0f, 0.4f, 0.0f);
+    if (isWhite)
+        glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+    else
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void Renderer::reportErrorAndExit(const std::string &function_name, const std::string &message)
