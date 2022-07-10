@@ -5,12 +5,11 @@ include(CTest)
 enable_testing()
 
 add_executable(cmake_practice
-    main.cpp
-    shader_loader.cpp
-    shader_loader.h
-    fragment.shader
-    vertex.shader
+    src/main.cpp
+    src/shader_loader.h
+    src/shader_loader.cpp
 )
+
 
 add_subdirectory(external/glfw EXCLUDE_FROM_ALL)
 add_subdirectory(external/glew EXCLUDE_FROM_ALL)
@@ -21,6 +20,9 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE libglew_static
     PRIVATE glm
 )
+
+add_custom_target(fragment_shader SOURCE shader/fragement.glsl)
+add_custom_target(vertex_shader SOURCE shader/vertex.glsl)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
