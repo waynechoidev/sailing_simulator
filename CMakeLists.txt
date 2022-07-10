@@ -21,8 +21,11 @@ target_link_libraries(${PROJECT_NAME}
     PRIVATE glm
 )
 
-add_custom_target(fragment_shader SOURCE shader/fragement.glsl)
-add_custom_target(vertex_shader SOURCE shader/vertex.glsl)
+add_custom_command(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E create_symlink
+                ${CMAKE_SOURCE_DIR}/shader
+                ${CMAKE_CURRENT_BINARY_DIR}/shader)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
