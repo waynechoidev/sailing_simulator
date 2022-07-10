@@ -5,9 +5,11 @@ include(CTest)
 enable_testing()
 
 add_executable(cmake_practice
-    src/main.cpp
+    main.cpp
     src/shader_loader.h
     src/shader_loader.cpp
+    src/renderer.h
+    src/renderer.cpp
 )
 
 
