@@ -1,7 +1,7 @@
-#include "src/renderer.h"
+#include "src/simulater.h"
 
 int main()
 {
-    Renderer renderer;
-    renderer.run();
+    Simulater simulater("Simulater", 800, 600, true);
+    simulater.run();
 }

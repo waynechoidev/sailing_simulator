@@ -10,6 +10,8 @@ add_executable(cmake_practice
     src/shader_loader.cpp
     src/renderer.h
     src/renderer.cpp
+    src/simulater.h
+    src/simulater.cpp
 )
 
 
