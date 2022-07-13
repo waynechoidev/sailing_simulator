@@ -2,6 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "shader_loader.h"
+#include <glm/glm.hpp>
 
 void Simulater::update()
 {
@@ -14,17 +15,16 @@ void Simulater::update()
     GLuint programID = LoadShaders("shader/vertex.glsl", "shader/fragment.glsl");
 
     static const GLfloat g_vertex_buffer_data[] = {
-        -1.0f,
-        -1.0f,
+        -0.02f,
+        -0.1f,
         0.0f,
-        1.0f,
-        -1.0f,
+        0.02f,
+        -0.1f,
         0.0f,
         0.0f,
-        1.0f,
+        0.0f,
         0.0f,
     };
-
     GLuint vertexbuffer;
     glGenBuffers(1, &vertexbuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
@@ -37,6 +37,15 @@ void Simulater::update()
 
         // Use our shader
         glUseProgram(programID);
+
+        // move forward
+        GLint loc = glGetUniformLocation(programID, "Position");
+        if (loc != -1)
+        {
+            static float y = 0.0;
+            y += 0.001f;
+            glUniform1f(loc, y);
+        }
 
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
