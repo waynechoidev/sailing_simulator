@@ -6,12 +6,12 @@ enable_testing()
 
 add_executable(cmake_practice
     main.cpp
-    src/shader_loader.h
-    src/shader_loader.cpp
-    src/renderer.h
-    src/renderer.cpp
-    src/simulater.h
-    src/simulater.cpp
+    lib/shader_loader.h
+    lib/shader_loader.cpp
+    lib/window.h
+    lib/window.cpp
+    lib/mesh.h
+    lib/mesh.cpp
 )
 
 
