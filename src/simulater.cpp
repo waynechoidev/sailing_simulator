@@ -22,43 +22,38 @@ void Simulater::update()
     // Create and compile our GLSL program from the shaders
     shader = LoadShaders("shader/vertex.glsl", "shader/fragment.glsl");
 
-    static const GLfloat vertices[] = {
-        -1.0f,
-        -1.0f,
-        0.0f,
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2};
 
-        1.0f,
-        -1.0f,
-        0.0f,
+    GLfloat vertices[] = {
+        -1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f};
 
-        0.0f,
-        1.0f,
-        0.0f,
-    };
-    static const GLfloat colors[] = {
-        1.0f,
-        0.0f,
-        0.0f,
-
-        0.0f,
-        1.0f,
-        0.0f,
-
-        0.0f,
-        0.0f,
-        1.0f,
-    };
+    // static const GLfloat colors[] = {
+    //     1.0f, 0.0f, 0.0f,
+    //     1.0f, 1.0f, 0.0f,
+    //     0.0f, 1.0f, 0.0f,
+    //     0.0f, 0.0f, 1.0f};
 
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
+
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glGenBuffers(1, &colorBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+    // glGenBuffers(1, &colorBuffer);
+    // glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(
@@ -70,17 +65,18 @@ void Simulater::update()
         (void *)0 // array buffer offset
     );
 
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(
-        1,        // attribute. No particular reason for 1, but must match the layout in the shader.
-        3,        // size
-        GL_FLOAT, // type
-        GL_FALSE, // normalized?
-        0,        // stride
-        (void *)0 // array buffer offset
-    );
+    // glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(
+    //     1,        // attribute. No particular reason for 1, but must match the layout in the shader.
+    //     3,        // size
+    //     GL_FLOAT, // type
+    //     GL_FALSE, // normalized?
+    //     0,        // stride
+    //     (void *)0 // array buffer offset
+    // );
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);
 
@@ -102,30 +98,26 @@ void Simulater::update()
             currentAngle++;
 
         // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use our shader
         glUseProgram(shader);
 
         glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, triOffset, 0.0f));
-        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(triOffset, triOffset, triOffset));
+        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        // model = glm::translate(model, glm::vec3(0.0f, triOffset, 0.0f));
+        // model = glm::scale(model, glm::vec3(triOffset, triOffset, triOffset));
 
-        // move forward
         u_model = glGetUniformLocation(shader, "model");
         if (u_model != -1)
             glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-
-        // Draw the triangle !
-        glDrawArrays(GL_TRIANGLES, 0, 3); // 3 indices starting at 0 -> 1 triangle
-
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+        glDrawElements(GL_TRIANGLES, 3 * 4, GL_UNSIGNED_INT, 0); // 3 indices starting at 0 -> 1 triangle
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
         glUseProgram(0);
 
         // Swap buffers
