@@ -1,15 +1,17 @@
 #version 330 core
 
-uniform float Position;
+uniform mat4 model;
 // Input vertex data, different for all executions of this shader.
-layout(location = 0) in vec3 vertexPosition_modelspace;
+layout(location = 0) in vec3 pos;
+layout(location = 1) in vec3 colorVertex;
+
+out vec3 fragmentColor;
 
 void main(){
 
-    gl_Position.x = vertexPosition_modelspace.x;
-    gl_Position.y = vertexPosition_modelspace.y + Position;;
-    gl_Position.z = vertexPosition_modelspace.z;
-    gl_Position.w = 1.0;
+   gl_Position = model * vec4(pos, 1.0);
+
+   fragmentColor = colorVertex;
 
 }
 
