@@ -59,7 +59,7 @@ int main()
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -82,6 +82,7 @@ int main()
     delete obj1;
     delete obj2;
     mainWindow.terminateWindow();
+
     return 0;
 }
 

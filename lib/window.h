@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
@@ -9,19 +10,27 @@ public:
     Window();
 
     Window(GLint windowWidth, GLint windowHeight, const char *subject);
+    ~Window() {}
 
-    int Initialise();
+    void Initialise();
 
     GLint getBufferWidth() { return _bufferWidth; }
     GLint getBufferHeight() { return _bufferHeight; }
-    int getWindowKey(int key) { return glfwGetKey(mainWindow, key); }
     bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
 
     void swapBuffers() { glfwSwapBuffers(mainWindow); }
 
-    ~Window() {}
+    bool *getKeys() { return keys; }
+    GLfloat getXChange();
+    GLfloat getYChange();
 
     void terminateWindow();
+
+private:
+    void reportErrorAndExit(const std::string &function_name, const std::string &message);
+    static void handleKeys(GLFWwindow *window, int key, int code, int action, int mode);
+    static void handleMouse(GLFWwindow *window, double xPos, double yPos);
+    void createCallback();
 
 private:
     GLFWwindow *mainWindow;
@@ -29,4 +38,12 @@ private:
     GLint _width, _height;
     GLint _bufferWidth, _bufferHeight;
     const char *_subject;
+
+    bool keys[1024];
+
+    GLfloat lastX;
+    GLfloat lastY;
+    GLfloat xChange;
+    GLfloat yChange;
+    bool mouseFirstMoved;
 };
