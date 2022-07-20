@@ -32,7 +32,8 @@ int main()
     shader = LoadShaders("shader/vertex.glsl", "shader/fragment.glsl");
     CreateObjects();
 
-    glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
+    // glm::mat4 projection = glm::perspective(glm::radians(20.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
+    glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, -1.0f, 1.0f);
 
     while (!mainWindow.getShouldClose())
     {
@@ -58,17 +59,17 @@ int main()
         u_projection = glGetUniformLocation(shader, "projection");
 
         glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+        // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
         meshList[0]->RenderMesh();
 
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
+        model = glm::translate(model, glm::vec3(0.0f, 1.0f, 0.0f));
         // model = glm::rotate(model, currentAngle * toRadians, glm::vec3(0.0f, -1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         meshList[1]->RenderMesh();
 
