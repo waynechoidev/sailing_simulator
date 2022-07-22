@@ -20,7 +20,7 @@ Window::Window(GLint windowWidth, GLint windowHeight, const char *subject)
         keys[i] = 0;
 }
 
-void Window::Initialise()
+void Window::initialise()
 {
     if (!glfwInit())
         reportErrorAndExit(__FUNCTION__, "glfw initialization");
@@ -75,22 +75,7 @@ void Window::Initialise()
 void Window::createCallback()
 {
     glfwSetKeyCallback(mainWindow, handleKeys);
-    glfwSetCursorPosCallback(mainWindow, handleMouse);
 }
-
-GLfloat Window::getXChange()
-{
-    GLfloat theChange = xChange;
-    xChange = 0.0f;
-    return theChange;
-};
-
-GLfloat Window::getYChange()
-{
-    GLfloat theChange = yChange;
-    yChange = 0.0f;
-    return theChange;
-};
 
 void Window::handleKeys(GLFWwindow *window, int key, int code, int action, int mode)
 {
@@ -106,34 +91,12 @@ void Window::handleKeys(GLFWwindow *window, int key, int code, int action, int m
         if (action == GLFW_PRESS)
         {
             theWindow->keys[key] = true;
-            std::cout << "Pressed: " << key << std::endl;
         }
         else if (action == GLFW_RELEASE)
         {
             theWindow->keys[key] = false;
-            std::cout << "Released: " << key << std::endl;
         }
     }
-}
-
-void Window::handleMouse(GLFWwindow *window, double xPos, double yPos)
-{
-    Window *theWindow = static_cast<Window *>(glfwGetWindowUserPointer(window));
-
-    if (theWindow->mouseFirstMoved)
-    {
-        theWindow->lastX = xPos;
-        theWindow->lastY = yPos;
-        theWindow->mouseFirstMoved = false;
-    }
-
-    theWindow->xChange = xPos - theWindow->lastX;
-    theWindow->yChange = theWindow->lastY - yPos;
-
-    theWindow->lastX = xPos;
-    theWindow->lastY = yPos;
-
-    // std::cout << "x: " << theWindow->xChange << ", y: " << theWindow->yChange << std::endl;
 }
 
 void Window::reportErrorAndExit(const std::string &function_name, const std::string &message)

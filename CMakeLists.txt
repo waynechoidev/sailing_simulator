@@ -1,17 +1,19 @@
 cmake_minimum_required(VERSION 3.0.0)
-project(cmake_practice VERSION 0.1.0)
+project(sailing_simulator VERSION 0.1.0)
 
 include(CTest)
 enable_testing()
 
-add_executable(cmake_practice
-    main.cpp
-    lib/shader_loader.h
-    lib/shader_loader.cpp
-    lib/window.h
-    lib/window.cpp
-    lib/mesh.h
-    lib/mesh.cpp
+add_executable(sailing_simulator
+    src/main.cpp
+    src/yacht.h
+    src/yacht.cpp
+    engine/shader_loader.h
+    engine/shader_loader.cpp
+    engine/window.h
+    engine/window.cpp
+    engine/mesh.h
+    engine/mesh.cpp
 )
 
 
