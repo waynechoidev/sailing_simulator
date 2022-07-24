@@ -16,6 +16,7 @@ public:
     void turnToPort();
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
+    void update();
 
     float getXPos() { return _prevX; }
     float getYPos() { return _prevY; }
@@ -28,14 +29,24 @@ private:
     float getAppWindAngle(glm::vec2 worldWind);
 
 private:
-    // unsigned int mastIndices[6] = {
-    //     5, 6, 7,
-    //     5, 7, 8};
-    // GLfloat mastVertices[12] = {
-    //     0.0f, 2.0f, 0.1f,
-    //     3.0f, 2.0f, 0.1f,
-    //     3.0f, 2.3f, 0.1f,
-    //     0.0f, 2.3f, 0.1f};
+    unsigned int _indices[15] = {
+        0, 1, 2,
+        2, 3, 4,
+        0, 2, 4,
+        5, 6, 7,
+        5, 7, 8};
+    GLfloat _hullVertices[15] = {
+        -1.0f, -2.0f, 0.1f,
+        1.0f, -2.0f, 0.1f,
+        1.0f, 0.0f, 0.1f,
+        0.0f, 2.0f, 0.1f,
+        -1.0f, 0.0f, 0.1f};
+    GLfloat _mastVertices[12] = {
+        -0.15f, 0.0f, 0.1f,
+        -0.15f, -3.0f, 0.1f,
+        0.15f, -3.0f, 0.1f,
+        0.15f, 0.0f, 0.1f};
+    GLfloat _vertices[27] = {};
 
     float _prevX = 0.0f;
     float _prevY = 0.0f;

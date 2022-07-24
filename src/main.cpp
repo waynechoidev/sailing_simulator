@@ -23,6 +23,7 @@ glm::vec2 worldWind = {0.0f, -5.0f};
 
 int main()
 {
+
     mainWindow = Window(800, 600, "Sailing Simulation");
     mainWindow.initialise();
 
@@ -60,12 +61,6 @@ int main()
         model = yacht.getModelMatrix(deltaTime, worldWind);
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         yacht.renderMesh();
-
-        // Render Mast
-        mast.setVertices(yacht.getXPos(), yacht.getYPos());
-        model = mast.getModelMatrix();
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-        mast.renderMesh();
 
         glUseProgram(0);
 

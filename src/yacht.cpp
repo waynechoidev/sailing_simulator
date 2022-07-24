@@ -1,31 +1,11 @@
 #include "yacht.h"
 #include <iostream>
-// #include <cstring>
+#include <cstring>
 
 void Yacht::createYacht()
 {
-
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 4,
-        0, 2, 4};
-
-    GLfloat vertices[] = {
-        -1.0f, 0.0f, 0.1f,
-        1.0f, 0.0f, 0.1f,
-        1.0f, 2.0f, 0.1f,
-        0.0f, 4.0f, 0.1f,
-        -1.0f, 2.0f, 0.1f};
-
-    createMesh(vertices, indices, sizeof(vertices), sizeof(indices));
-
-    // GLfloat vertices[numOfVertices] = {};
-    // unsigned int indices[numberOfIndices] = {};
-
-    // memcpy(vertices, hullVertices, sizeof(hullVertices));
-    // memcpy(vertices + (sizeof(hullVertices) / sizeof(hullVertices[0])), mastVertices, sizeof(mastVertices));
-    // memcpy(indices, hullIndices, sizeof(hullIndices));
-    // memcpy(indices + (sizeof(hullIndices) / sizeof(hullIndices[0])), mastIndices, sizeof(mastIndices));
+    update();
+    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4
@@ -54,6 +34,28 @@ Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
     _prevY = y;
 
     return model;
+}
+
+void Yacht::update()
+{
+
+    glm::mat4 mastModel(1.0f);
+    mastModel = glm::translate(mastModel, glm::vec3(0.0f, 0.0f, 0.0f));
+    mastModel = glm::rotate(mastModel, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+    for (int i = 0; i <= (sizeof(_mastVertices) / sizeof(_mastVertices[0])) / 3; i++)
+    {
+        int j = i * 3;
+        glm::vec4 vec = {_mastVertices[j], _mastVertices[j + 1], _mastVertices[j + 2], 1.0f};
+        vec = mastModel * vec;
+
+        _mastVertices[j] = vec[0];
+        _mastVertices[j + 1] = vec[1];
+        _mastVertices[j + 2] = vec[2];
+    }
+
+    memcpy(_vertices, _hullVertices, sizeof(_hullVertices));
+    memcpy(_vertices + (sizeof(_hullVertices) / sizeof(_hullVertices[0])), _mastVertices, sizeof(_mastVertices));
 }
 
 void Yacht::turnToPort()
