@@ -8,6 +8,8 @@ add_executable(sailing_simulator
     src/main.cpp
     src/yacht.h
     src/yacht.cpp
+    src/mast.h
+    src/mast.cpp
     engine/shader_loader.h
     engine/shader_loader.cpp
     engine/window.h

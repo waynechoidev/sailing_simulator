@@ -1,27 +1,37 @@
 #include "yacht.h"
 #include <iostream>
+// #include <cstring>
 
 void Yacht::createYacht()
 {
+
     unsigned int indices[] = {
         0, 1, 2,
         2, 3, 4,
         0, 2, 4};
 
     GLfloat vertices[] = {
-        -0.7f, 0.0f, 0.1f,
-        0.7f, 0.0f, 0.1f,
-        0.7f, 2.0f, 0.1f,
+        -1.0f, 0.0f, 0.1f,
+        1.0f, 0.0f, 0.1f,
+        1.0f, 2.0f, 0.1f,
         0.0f, 4.0f, 0.1f,
-        -0.7f, 2.0f, 0.1f};
+        -1.0f, 2.0f, 0.1f};
 
-    createMesh(vertices, indices, 15, 9);
+    createMesh(vertices, indices, sizeof(vertices), sizeof(indices));
+
+    // GLfloat vertices[numOfVertices] = {};
+    // unsigned int indices[numberOfIndices] = {};
+
+    // memcpy(vertices, hullVertices, sizeof(hullVertices));
+    // memcpy(vertices + (sizeof(hullVertices) / sizeof(hullVertices[0])), mastVertices, sizeof(mastVertices));
+    // memcpy(indices, hullIndices, sizeof(hullIndices));
+    // memcpy(indices + (sizeof(hullIndices) / sizeof(hullIndices[0])), mastIndices, sizeof(mastIndices));
 }
 
 glm::mat4
-Yacht::getModelMatrix(float deltaTime)
+Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
 {
-    glm::vec2 worldWind = {0.0f, -5.0f};
+
     glm::vec2 velocity =
         _prevVelocity + getPoweredPropulsion(deltaTime) + getWindPropulsion(worldWind, deltaTime) - getDrag(deltaTime);
 
@@ -33,7 +43,7 @@ Yacht::getModelMatrix(float deltaTime)
     float x = _prevX + velocity.x * deltaTime;
     float y = _prevY + velocity.y * deltaTime;
 
-    std::cout << glm::length(velocity) << std::endl;
+    // std::cout << glm::length(velocity) << std::endl;
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(x, y, 0.0f));
@@ -94,22 +104,23 @@ glm::vec2 Yacht::getPoweredPropulsion(float deltaTime)
 
 glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
 {
-    glm::vec2 appWind = worldWind + _prevVelocity;
 
-    float degree = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curAngle));
+    float appWindAngle = getAppWindAngle(worldWind);
 
     glm::vec2 propulsion = {0.0f, 0.0f};
 
-    if (degree >= -30.0f && degree <= 30.0f)
+    if (appWindAngle >= -30.0f && appWindAngle <= 30.0f)
         propulsion.y = 3.0f;
-    else if (degree >= -90.0f && degree <= 90.0f)
+    else if (appWindAngle >= -90.0f && appWindAngle <= 90.0f)
         propulsion.y = 2.0f;
-    else if (degree >= -130.0f && degree <= 130.0f)
+    else if (appWindAngle >= -130.0f && appWindAngle <= 130.0f)
         propulsion.y = 1.0f;
-    else if (degree >= -150.0f && degree <= 150.0f)
+    else if (appWindAngle >= -150.0f && appWindAngle <= 150.0f)
         propulsion.y = 0.5f;
     else
         propulsion.y = 0.0f;
+
+    _prevAppWindAngle = appWindAngle;
 
     propulsion = glm::rotate(propulsion, getCurAngle());
     propulsion = propulsion * deltaTime;
@@ -120,4 +131,13 @@ glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
 float Yacht::getCurAngle()
 {
     return glm::orientedAngle(ZERO, _curAngle);
+}
+
+float Yacht::getAppWindAngle(glm::vec2 worldWind)
+{
+    glm::vec2 appWind = worldWind + _prevVelocity;
+
+    float appWindAngle = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curAngle));
+
+    return appWindAngle;
 }

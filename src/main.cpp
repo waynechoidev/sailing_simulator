@@ -9,16 +9,17 @@
 #include "../engine/window.h"
 #include "../engine/shader_loader.h"
 #include "yacht.h"
+#include "mast.h"
 #include <iostream>
 
 Window mainWindow;
 GLuint shader, u_model, u_projection;
 Yacht yacht;
+Mast mast;
 
 float deltaTime = 0.0f;
 float lastTime = 0.0f;
-float windSpeed = 2.0f;
-int windAngle = 30;
+glm::vec2 worldWind = {0.0f, -5.0f};
 
 int main()
 {
@@ -26,11 +27,9 @@ int main()
     mainWindow.initialise();
 
     yacht.createYacht();
+    mast.createMast();
 
     shader = loadShaders("shader/vertex.glsl", "shader/fragment.glsl");
-
-    // glm::mat4 projection = glm::perspective(glm::radians(20.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
-    glm::mat4 projection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, -1.0f, 1.0f);
 
     while (!mainWindow.getShouldClose())
     {
@@ -52,12 +51,21 @@ int main()
         u_model = glGetUniformLocation(shader, "model");
         u_projection = glGetUniformLocation(shader, "projection");
 
-        glm::mat4 model = yacht.getModelMatrix(deltaTime);
-
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+        glm::mat4 projection = glm::ortho(-40.0f, 40.0f, -30.0f, 30.0f, -1.0f, 1.0f);
         glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
 
+        glm::mat4 model(1.0f);
+
+        // Render Yacht
+        model = yacht.getModelMatrix(deltaTime, worldWind);
+        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         yacht.renderMesh();
+
+        // Render Mast
+        mast.setVertices(yacht.getXPos(), yacht.getYPos());
+        model = mast.getModelMatrix();
+        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+        mast.renderMesh();
 
         glUseProgram(0);
 
