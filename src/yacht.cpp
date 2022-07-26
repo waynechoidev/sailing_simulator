@@ -4,14 +4,12 @@
 
 void Yacht::createYacht()
 {
-    update();
     createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4
 Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
 {
-
     glm::vec2 velocity =
         _prevVelocity + getPoweredPropulsion(deltaTime) + getWindPropulsion(worldWind, deltaTime) - getDrag(deltaTime);
 
@@ -27,7 +25,7 @@ Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(x, y, 0.0f));
-    model = glm::rotate(model, getCurAngle(), glm::vec3(0.0f, 0.0f, 1.0f));
+    model = glm::rotate(model, getCurDir(), glm::vec3(0.0f, 0.0f, 1.0f));
 
     _prevVelocity = velocity;
     _prevX = x;
@@ -36,36 +34,14 @@ Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
     return model;
 }
 
-void Yacht::update()
-{
-
-    glm::mat4 mastModel(1.0f);
-    mastModel = glm::translate(mastModel, glm::vec3(0.0f, 0.0f, 0.0f));
-    mastModel = glm::rotate(mastModel, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-    for (int i = 0; i <= (sizeof(_mastVertices) / sizeof(_mastVertices[0])) / 3; i++)
-    {
-        int j = i * 3;
-        glm::vec4 vec = {_mastVertices[j], _mastVertices[j + 1], _mastVertices[j + 2], 1.0f};
-        vec = mastModel * vec;
-
-        _mastVertices[j] = vec[0];
-        _mastVertices[j + 1] = vec[1];
-        _mastVertices[j + 2] = vec[2];
-    }
-
-    memcpy(_vertices, _hullVertices, sizeof(_hullVertices));
-    memcpy(_vertices + (sizeof(_hullVertices) / sizeof(_hullVertices[0])), _mastVertices, sizeof(_mastVertices));
-}
-
 void Yacht::turnToPort()
 {
-    _curAngle = glm::rotate(_curAngle, glm::radians(0.5f));
+    _curDirVec = glm::rotate(_curDirVec, 0.01f);
 }
 
 void Yacht::turnToStarboard()
 {
-    _curAngle = glm::rotate(_curAngle, glm::radians(-0.5f));
+    _curDirVec = glm::rotate(_curDirVec, -0.01f);
 }
 
 glm::vec2 Yacht::getDrag(float deltaTime)
@@ -94,7 +70,7 @@ glm::vec2 Yacht::getPoweredPropulsion(float deltaTime)
     {
         float engineSpeed = 0.5f * deltaTime;
         propulsion = {0.0f, engineSpeed};
-        propulsion = glm::rotate(propulsion, getCurAngle());
+        propulsion = glm::rotate(propulsion, getCurDir());
     }
     else
     {
@@ -124,22 +100,22 @@ glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
 
     _prevAppWindAngle = appWindAngle;
 
-    propulsion = glm::rotate(propulsion, getCurAngle());
+    propulsion = glm::rotate(propulsion, getCurDir());
     propulsion = propulsion * deltaTime;
 
     return propulsion;
 }
 
-float Yacht::getCurAngle()
+float Yacht::getCurDir()
 {
-    return glm::orientedAngle(ZERO, _curAngle);
+    return glm::orientedAngle(ZERO, _curDirVec);
 }
 
 float Yacht::getAppWindAngle(glm::vec2 worldWind)
 {
     glm::vec2 appWind = worldWind + _prevVelocity;
 
-    float appWindAngle = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curAngle));
+    float appWindAngle = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curDirVec));
 
     return appWindAngle;
 }

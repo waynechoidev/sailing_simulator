@@ -16,43 +16,31 @@ public:
     void turnToPort();
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
-    void update();
-
-    float getXPos() { return _prevX; }
-    float getYPos() { return _prevY; }
+    float getAppWindAngle(glm::vec2 worldWind);
 
 private:
     glm::vec2 getDrag(float deltaTime);
     glm::vec2 getPoweredPropulsion(float deltaTime);
     glm::vec2 getWindPropulsion(glm::vec2 worldWind, float deltaTime);
-    float getCurAngle();
-    float getAppWindAngle(glm::vec2 worldWind);
+    float getCurDir();
 
 private:
-    unsigned int _indices[15] = {
+    unsigned int _indices[9] = {
         0, 1, 2,
         2, 3, 4,
-        0, 2, 4,
-        5, 6, 7,
-        5, 7, 8};
-    GLfloat _hullVertices[15] = {
-        -1.0f, -2.0f, 0.1f,
-        1.0f, -2.0f, 0.1f,
+        0, 2, 4};
+    GLfloat _vertices[15] = {
+        -1.0f, 0.0f, 0.1f,
         1.0f, 0.0f, 0.1f,
-        0.0f, 2.0f, 0.1f,
-        -1.0f, 0.0f, 0.1f};
-    GLfloat _mastVertices[12] = {
-        -0.15f, 0.0f, 0.1f,
-        -0.15f, -3.0f, 0.1f,
-        0.15f, -3.0f, 0.1f,
-        0.15f, 0.0f, 0.1f};
-    GLfloat _vertices[27] = {};
+        1.0f, 2.0f, 0.1f,
+        0.0f, 4.0f, 0.1f,
+        -1.0f, 2.0f, 0.1f};
 
     float _prevX = 0.0f;
     float _prevY = 0.0f;
-    float _prevAppWindAngle = 0.0f;
+    float _prevAppWindAngle = 0.0f; // degrees
     glm::vec2 _prevVelocity = {0.0f, 0.0f};
-    glm::vec2 _curAngle = {0.0f, 1.0f};
+    glm::vec2 _curDirVec = {0.0f, 1.0f};
 
     bool _isEngineOn = false;
 

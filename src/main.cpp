@@ -52,7 +52,7 @@ int main()
         u_model = glGetUniformLocation(shader, "model");
         u_projection = glGetUniformLocation(shader, "projection");
 
-        glm::mat4 projection = glm::ortho(-40.0f, 40.0f, -30.0f, 30.0f, -1.0f, 1.0f);
+        glm::mat4 projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
         glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
 
         glm::mat4 model(1.0f);
@@ -61,6 +61,11 @@ int main()
         model = yacht.getModelMatrix(deltaTime, worldWind);
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         yacht.renderMesh();
+
+        // Render Mast
+        model = model * mast.getModelMatrix(yacht.getAppWindAngle(worldWind));
+        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+        mast.renderMesh();
 
         glUseProgram(0);
 

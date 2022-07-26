@@ -14,9 +14,7 @@ public:
 
     void createMast();
 
-    void setVertices(float x, float y);
-
-    glm::mat4 getModelMatrix();
+    glm::mat4 getModelMatrix(float angle);
 
 private:
     unsigned int _indices[6] = {
@@ -29,7 +27,5 @@ private:
         0.15f, -3.0f, 0.1f,
         0.15f, 0.0f, 0.1f};
 
-    float _x = 0.0f;
-    float _y = 2.0f;
-    float _angle = 0.0f;
+    float angle = 0.0f;
 };
