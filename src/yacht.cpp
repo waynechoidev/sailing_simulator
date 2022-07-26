@@ -82,8 +82,8 @@ glm::vec2 Yacht::getPoweredPropulsion(float deltaTime)
 
 glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
 {
-
-    float appWindAngle = getAppWindAngle(worldWind);
+    glm::vec2 appWind = worldWind + _prevVelocity;
+    float appWindAngle = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curDirVec));
 
     glm::vec2 propulsion = {0.0f, 0.0f};
 
@@ -111,11 +111,7 @@ float Yacht::getCurDir()
     return glm::orientedAngle(ZERO, _curDirVec);
 }
 
-float Yacht::getAppWindAngle(glm::vec2 worldWind)
+float Yacht::getMastAngle(glm::vec2 worldWind)
 {
-    glm::vec2 appWind = worldWind + _prevVelocity;
-
-    float appWindAngle = glm::degrees(glm::orientedAngle(glm::normalize(appWind), _curDirVec));
-
-    return appWindAngle;
+    return glm::degrees(glm::orientedAngle(glm::normalize(worldWind), _curDirVec));
 }

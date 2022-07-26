@@ -63,7 +63,7 @@ int main()
         yacht.renderMesh();
 
         // Render Mast
-        model = model * mast.getModelMatrix(yacht.getAppWindAngle(worldWind));
+        model = model * mast.getModelMatrix(yacht.getMastAngle(worldWind));
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         mast.renderMesh();
 

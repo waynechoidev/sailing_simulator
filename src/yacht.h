@@ -16,7 +16,7 @@ public:
     void turnToPort();
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
-    float getAppWindAngle(glm::vec2 worldWind);
+    float getMastAngle(glm::vec2 worldWind);
 
 private:
     glm::vec2 getDrag(float deltaTime);
