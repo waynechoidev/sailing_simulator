@@ -33,6 +33,7 @@ glm::vec2 startPointList[4] = {
     {70.f, -50.f},
     {70.f, 50.f},
     {-70.f, 50.f}};
+float startDirAngle[4] = {-45.0f, 45.0f, 135.0f, -135.0f};
 
 // World data
 glm::vec2 worldWind = {0.0f, 5.0f};
@@ -144,7 +145,7 @@ void testCollision()
         if (yacht.testCollision(obstacleAABBList[i].center, obstacleAABBList[i].length))
         {
             std::cout << "crash!!" << std::endl;
-            reset();
+            yacht.crash();
             continue;
         }
     }
@@ -157,7 +158,10 @@ void reset()
 
     std::uniform_int_distribution<int> dir(0, 360);
     float windDir = (float)dir(gen);
-    yacht.reset(startPointList[start]);
+
+    yacht.reset(startPointList[start], startDirAngle[start]);
+
+    std::cout << start << std::endl;
     worldWind = glm::rotate(worldWind, glm::radians(windDir));
 
     setObstacles();

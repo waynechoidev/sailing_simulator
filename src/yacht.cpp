@@ -115,12 +115,13 @@ float Yacht::getMastAngle(glm::vec2 worldWind)
     return glm::degrees(glm::orientedAngle(glm::normalize(worldWind), _curDirVec));
 }
 
-void Yacht::reset(glm::vec2 pos)
+void Yacht::reset(glm::vec2 pos, float dirAngle)
 {
     _curPos = pos;
     _prevAppWindAngle = 0.0f;
     _prevVelocity = {0.0f, 0.0f};
     _curDirVec = {0.0f, 1.0f};
+    _curDirVec = glm::rotate(_curDirVec, glm::radians(dirAngle));
 }
 
 bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)

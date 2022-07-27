@@ -13,12 +13,17 @@ public:
     Yacht() : Mesh(){};
     void createYacht();
     glm::mat4 getModelMatrix(float deltaTime, glm::vec2 worldWind);
-    void reset(glm::vec2 pos);
+    void reset(glm::vec2 pos, float dirAngle);
     void turnToPort();
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
     float getMastAngle(glm::vec2 worldWind);
     bool testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
+
+    void crash()
+    {
+        _prevVelocity = _prevVelocity * -1.0f;
+    }
 
 private:
     void initialize();
