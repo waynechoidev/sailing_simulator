@@ -86,7 +86,7 @@ glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
 
     glm::vec2 propulsion = {0.0f, 0.0f};
 
-    if (appWindAngle >= -30.0f && appWindAngle <= 30.0f)
+    if (appWindAngle >= -40.0f && appWindAngle <= 40.0f)
         propulsion.y = 5.0f;
     else if (appWindAngle >= -90.0f && appWindAngle <= 90.0f)
         propulsion.y = 3.0f;
@@ -150,4 +150,18 @@ bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
         return false;
     else
         return true;
+}
+
+bool Yacht::testCollisionWithWall()
+{
+    glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
+    if (circlePos.x - CIRCLE_RADIUS <= -80.0f)
+        return true;
+    if (circlePos.x + CIRCLE_RADIUS >= 80.0f)
+        return true;
+    if (circlePos.y - CIRCLE_RADIUS <= -60.0f)
+        return true;
+    if (circlePos.y + CIRCLE_RADIUS >= 60.0f)
+        return true;
+    return false;
 }

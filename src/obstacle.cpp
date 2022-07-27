@@ -13,10 +13,10 @@ void Obstacle::createObstacle(glm::vec2 center, glm::vec2 length)
         center.x - length.x / 2.0f, center.y + length.y / 2.0f, 0.1f};
 
     GLfloat colors[12] = {
-        5 / 256.0f, 78 / 256.0f, 54 / 256.0,
-        5 / 256.0f, 78 / 256.0f, 54 / 256.0,
-        5 / 256.0f, 78 / 256.0f, 54 / 256.0,
-        5 / 256.0f, 78 / 256.0f, 54 / 256.0};
+        0.02f, 0.3f, 0.21f,
+        0.02f, 0.3f, 0.21f,
+        0.02f, 0.3f, 0.21f,
+        0.02f, 0.3f, 0.21f};
 
     createMesh(vertices, colors, indices, sizeof(vertices), sizeof(indices));
 }

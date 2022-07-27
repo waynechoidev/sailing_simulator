@@ -10,6 +10,7 @@
 #include "yacht.h"
 #include "mast.h"
 #include "obstacle.h"
+#include "vane.h"
 #include <iostream>
 #include <random>
 
@@ -20,6 +21,7 @@ GLuint shader, u_model, u_projection;
 Yacht yacht;
 Mast mast;
 Obstacle obstacle;
+Vane vane;
 const int NUM_OF_OBSTACLES = 20;
 struct obstacleAABB
 {
@@ -53,6 +55,7 @@ int main()
     // Create Meshes
     yacht.createYacht();
     mast.createMast();
+    vane.createVane();
 
     // Set world
     reset();
@@ -105,6 +108,12 @@ int main()
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
         mast.renderMesh();
 
+        // Render Vane
+        glm::mat4 vaneModel(1.0f);
+        vaneModel = vaneModel * vane.getModelMatrix(yacht.getCurPos(), worldWind);
+        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(vaneModel));
+        vane.renderMesh();
+
         glUseProgram(0);
 
         mainWindow.swapBuffers();
@@ -146,8 +155,13 @@ void testCollision()
         {
             std::cout << "crash!!" << std::endl;
             yacht.crash();
-            continue;
+            break;
         }
+    }
+    if (yacht.testCollisionWithWall())
+    {
+        std::cout << "Do not go that far!!" << std::endl;
+        yacht.crash();
     }
 }
 
@@ -161,7 +175,6 @@ void reset()
 
     yacht.reset(startPointList[start], startDirAngle[start]);
 
-    std::cout << start << std::endl;
     worldWind = glm::rotate(worldWind, glm::radians(windDir));
 
     setObstacles();

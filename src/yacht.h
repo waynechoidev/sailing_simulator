@@ -19,6 +19,8 @@ public:
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
     float getMastAngle(glm::vec2 worldWind);
     bool testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
+    bool testCollisionWithWall();
+    glm::vec2 getCurPos() { return _curPos; }
 
     void crash()
     {
