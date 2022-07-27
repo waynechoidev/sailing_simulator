@@ -11,6 +11,7 @@
 #include "mast.h"
 #include "obstacle.h"
 #include "vane.h"
+#include "goal.h"
 #include <iostream>
 #include <random>
 
@@ -23,14 +24,17 @@ Mast mast;
 Obstacle obstacle;
 Vane vane;
 const int NUM_OF_OBSTACLES = 20;
-struct obstacleAABB
+struct AABB
 {
     glm::vec2 center;
     glm::vec2 length;
 };
 Obstacle obstacleList[NUM_OF_OBSTACLES];
-obstacleAABB obstacleAABBList[NUM_OF_OBSTACLES];
-glm::vec2 startPointList[4] = {
+AABB obstacleAABBList[NUM_OF_OBSTACLES];
+Goal goal;
+AABB goalAABB;
+
+glm::vec2 pointList[4] = {
     {-70.f, -50.f},
     {70.f, -50.f},
     {70.f, 50.f},
@@ -43,7 +47,9 @@ float deltaTime = 0.0f;
 float lastTime = 0.0f;
 
 void setObstacles();
+void setGoal(glm::vec2 center);
 void testCollision();
+void goalCollision();
 void reset();
 
 int main()
@@ -65,6 +71,7 @@ int main()
     while (!mainWindow.getShouldClose())
     {
         testCollision();
+        goalCollision();
 
         if (mainWindow.getKeys()[32])
         {
@@ -90,6 +97,10 @@ int main()
         glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
 
         glm::mat4 model(1.0f);
+
+        // Render Goal
+        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+        goal.renderMesh();
 
         // Render obstacles
         glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
@@ -136,7 +147,7 @@ void setObstacles()
     for (int i = 0; i < NUM_OF_OBSTACLES; i++)
     {
         Obstacle obstacle;
-        obstacleAABB aabb;
+        AABB aabb;
         glm::vec2 center = {randCenterX(gen), randCenterY(gen)};
         glm::vec2 length = {randLengthX(gen), randLengthY(gen)};
         obstacle.createObstacle(center, length);
@@ -145,6 +156,14 @@ void setObstacles()
         obstacleList[i] = obstacle;
         obstacleAABBList[i] = aabb;
     }
+}
+
+void setGoal(glm::vec2 center)
+{
+    glm::vec2 length = {10.0f, 10.0f};
+    goal.createGoal(center, length);
+    goalAABB.center = center;
+    goalAABB.length = length;
 }
 
 void testCollision()
@@ -165,6 +184,16 @@ void testCollision()
     }
 }
 
+void goalCollision()
+{
+
+    if (yacht.testCollision(goalAABB.center, goalAABB.length))
+    {
+        std::cout << "Success!!" << std::endl;
+        reset();
+    }
+}
+
 void reset()
 {
     std::uniform_int_distribution<int> point(0, 3);
@@ -173,9 +202,27 @@ void reset()
     std::uniform_int_distribution<int> dir(0, 360);
     float windDir = (float)dir(gen);
 
-    yacht.reset(startPointList[start], startDirAngle[start]);
+    yacht.reset(pointList[start], startDirAngle[start]);
 
     worldWind = glm::rotate(worldWind, glm::radians(windDir));
 
     setObstacles();
+
+    int finish;
+    switch (start)
+    {
+    case 0:
+        finish = 2;
+        break;
+    case 1:
+        finish = 3;
+        break;
+    case 2:
+        finish = 0;
+        break;
+    case 3:
+        finish = 1;
+        break;
+    }
+    setGoal(pointList[finish]);
 }
