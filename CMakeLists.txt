@@ -10,6 +10,8 @@ add_executable(sailing_simulator
     src/yacht.cpp
     src/mast.h
     src/mast.cpp
+    src/obstacle.h
+    src/obstacle.cpp
     engine/shader_loader.h
     engine/shader_loader.cpp
     engine/window.h

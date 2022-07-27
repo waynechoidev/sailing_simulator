@@ -58,7 +58,7 @@ void Window::initialise()
     glViewport(0, 0, _bufferWidth, _bufferHeight);
 
     // White background
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClearColor(0.64f, 0.77f, 0.86f, 1.0f);
 
     // Enable depth test
     glEnable(GL_DEPTH_TEST);

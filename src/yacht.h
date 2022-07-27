@@ -13,12 +13,15 @@ public:
     Yacht() : Mesh(){};
     void createYacht();
     glm::mat4 getModelMatrix(float deltaTime, glm::vec2 worldWind);
+    void reset(glm::vec2 pos);
     void turnToPort();
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
     float getMastAngle(glm::vec2 worldWind);
+    bool testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
 
 private:
+    void initialize();
     glm::vec2 getDrag(float deltaTime);
     glm::vec2 getPoweredPropulsion(float deltaTime);
     glm::vec2 getWindPropulsion(glm::vec2 worldWind, float deltaTime);
@@ -35,9 +38,14 @@ private:
         1.0f, 2.0f, 0.1f,
         0.0f, 4.0f, 0.1f,
         -1.0f, 2.0f, 0.1f};
+    GLfloat _colors[15] = {
+        0.3f, 0.3f, 0.3f,
+        0.3f, 0.3f, 0.3f,
+        0.3f, 0.3f, 0.3f,
+        0.3f, 0.3f, 0.3f,
+        0.3f, 0.3f, 0.3f};
 
-    float _prevX = 0.0f;
-    float _prevY = 0.0f;
+    glm::vec2 _curPos = {0.0f, 0.0f};
     float _prevAppWindAngle = 0.0f; // degrees
     glm::vec2 _prevVelocity = {0.0f, 0.0f};
     glm::vec2 _curDirVec = {0.0f, 1.0f};
@@ -47,4 +55,5 @@ private:
     const glm::vec2 ZERO = {0.0f, 1.0f};
 
     float MAX_SPEED = 10.0f;
+    float CIRCLE_RADIUS = 1.0f;
 };

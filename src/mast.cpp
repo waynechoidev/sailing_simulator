@@ -4,7 +4,7 @@
 
 void Mast::createMast()
 {
-    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
+    createMesh(_vertices, _colors, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4 Mast::getModelMatrix(float angle)
@@ -19,9 +19,6 @@ glm::mat4 Mast::getModelMatrix(float angle)
         mastAngle = (-90.0f / 150.0f) * angle + 90.0f;
     else
         mastAngle = 0.0f;
-
-    std::cout << "wind : " << angle << std::endl;
-    std::cout << "mast : " << mastAngle << std::endl;
 
     glm::mat4 model(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, 2.0f, 0.0f));

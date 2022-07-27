@@ -4,7 +4,7 @@
 
 void Yacht::createYacht()
 {
-    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
+    createMesh(_vertices, _colors, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4
@@ -18,8 +18,8 @@ Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
         velocity = glm::normalize(velocity) * MAX_SPEED;
     }
 
-    float x = _prevX + velocity.x * deltaTime;
-    float y = _prevY + velocity.y * deltaTime;
+    float x = _curPos.x + velocity.x * deltaTime;
+    float y = _curPos.y + velocity.y * deltaTime;
 
     // std::cout << glm::length(velocity) << std::endl;
 
@@ -28,8 +28,7 @@ Yacht::getModelMatrix(float deltaTime, glm::vec2 worldWind)
     model = glm::rotate(model, getCurDir(), glm::vec3(0.0f, 0.0f, 1.0f));
 
     _prevVelocity = velocity;
-    _prevX = x;
-    _prevY = y;
+    _curPos = {x, y};
 
     return model;
 }
@@ -88,13 +87,13 @@ glm::vec2 Yacht::getWindPropulsion(glm::vec2 worldWind, float deltaTime)
     glm::vec2 propulsion = {0.0f, 0.0f};
 
     if (appWindAngle >= -30.0f && appWindAngle <= 30.0f)
-        propulsion.y = 3.0f;
+        propulsion.y = 5.0f;
     else if (appWindAngle >= -90.0f && appWindAngle <= 90.0f)
-        propulsion.y = 2.0f;
+        propulsion.y = 3.0f;
     else if (appWindAngle >= -130.0f && appWindAngle <= 130.0f)
-        propulsion.y = 1.0f;
+        propulsion.y = 2.0f;
     else if (appWindAngle >= -150.0f && appWindAngle <= 150.0f)
-        propulsion.y = 0.5f;
+        propulsion.y = 1.0f;
     else
         propulsion.y = 0.0f;
 
@@ -114,4 +113,40 @@ float Yacht::getCurDir()
 float Yacht::getMastAngle(glm::vec2 worldWind)
 {
     return glm::degrees(glm::orientedAngle(glm::normalize(worldWind), _curDirVec));
+}
+
+void Yacht::reset(glm::vec2 pos)
+{
+    _curPos = pos;
+    _prevAppWindAngle = 0.0f;
+    _prevVelocity = {0.0f, 0.0f};
+    _curDirVec = {0.0f, 1.0f};
+}
+
+bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
+{
+    // Detect collision between obstacles(AABB) and yacht(Circle)
+    glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
+    glm::vec2 boxPoint;
+
+    if (circlePos.x < boxCenter.x - boxLength.x / 2.0f)
+        boxPoint.x = boxCenter.x - boxLength.x / 2.0f;
+    else if (circlePos.x > boxCenter.x + boxLength.x / 2.0f)
+        boxPoint.x = boxCenter.x + boxLength.x / 2.0f;
+    else
+        boxPoint.x = circlePos.x;
+
+    if (circlePos.y < boxCenter.y - boxLength.y / 2.0f)
+        boxPoint.y = boxCenter.y - boxLength.y / 2.0f;
+    else if (circlePos.y > boxCenter.y + boxLength.y / 2.0f)
+        boxPoint.y = boxCenter.y + boxLength.y / 2.0f;
+    else
+        boxPoint.y = circlePos.y;
+
+    glm::vec2 dist = circlePos - boxPoint;
+
+    if (glm::length(dist) >= CIRCLE_RADIUS)
+        return false;
+    else
+        return true;
 }
