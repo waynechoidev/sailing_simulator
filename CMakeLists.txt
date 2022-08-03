@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(sailing_simulator VERSION 0.1.0)
-
-include(CTest)
-enable_testing()
+cmake_minimum_required(VERSION 3.1)
+project(sailing_simulator)
 
 add_executable(sailing_simulator
     src/main.cpp
+    src/app.h
+    src/app.cpp
     src/yacht.h
     src/yacht.cpp
     src/mast.h
@@ -24,24 +23,46 @@ add_executable(sailing_simulator
     engine/mesh.cpp
 )
 
+if (EMSCRIPTEN)
+  target_link_libraries(${PROJECT_NAME} PUBLIC "-s USE_GLFW=3")
+  target_link_libraries(${PROJECT_NAME} PUBLIC "-s USE_WEBGL2=1")
+  target_link_libraries(${PROJECT_NAME} PUBLIC "-s WASM=1")
 
-add_subdirectory(external/glfw EXCLUDE_FROM_ALL)
-add_subdirectory(external/glew EXCLUDE_FROM_ALL)
+  # Copy the index.html file.
+  foreach(file "index.html")
+    configure_file(src/${file} ${file})
+  endforeach(file)
+
+  foreach(file "shader/shader.frag" "shader/shader.vert")
+    configure_file(${file} ${file})
+  endforeach(file)
+
+  # Allow the directories /shader and /data to be fetched by the web browser.
+  set_property(TARGET ${PROJECT_NAME} APPEND_STRING PROPERTY LINK_FLAGS
+    "--preload-file ${CMAKE_CURRENT_BINARY_DIR}/shader/@/shader/")
+  
+else() # Not Web
+
+  # glfw
+  add_subdirectory(external/glfw EXCLUDE_FROM_ALL)
+  target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+
+  # glew
+  add_definitions(-DGLEW_STATIC)
+  add_subdirectory(external/glew EXCLUDE_FROM_ALL)
+  target_link_libraries(${PROJECT_NAME} PRIVATE libglew_static)
+
+endif()
+
+# glm
 add_subdirectory(external/glm EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm)
 
-target_link_libraries(${PROJECT_NAME}
-    PRIVATE glfw
-    PRIVATE libglew_static
-    PRIVATE glm
+configure_file(
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/asset.hpp
+  ${CMAKE_CURRENT_BINARY_DIR}/src/asset.hpp
 )
-
-add_custom_command(
-        TARGET ${PROJECT_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-                ${CMAKE_SOURCE_DIR}/shader
-                ${CMAKE_CURRENT_BINARY_DIR}/shader)
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
-
-include(CPack)
+target_include_directories(${PROJECT_NAME}
+  PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src
+  PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/src
+)

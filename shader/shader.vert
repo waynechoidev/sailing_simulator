@@ -1,11 +1,14 @@
-#version 330 core
+#version 300 es
+precision mediump float;
+precision mediump int;
+precision mediump sampler2DArray;
 
 uniform mat4 model;
 uniform mat4 projection;
 
 // Input vertex data, different for all executions of this shader.
-layout(location = 0) in vec3 pos;
-layout(location = 1) in vec3 color;
+in vec3 pos;
+in vec3 color;
 
 out vec3 fragmentColor;
 

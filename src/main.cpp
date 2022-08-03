@@ -14,6 +14,10 @@
 #include "goal.h"
 #include <iostream>
 #include <random>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <emscripten/html5.h>
+#endif
 
 std::random_device rd;
 std::mt19937 gen(rd());
@@ -46,6 +50,7 @@ glm::vec2 worldWind = {0.0f, 5.0f};
 float deltaTime = 0.0f;
 float lastTime = 0.0f;
 
+void loop();
 void setObstacles();
 void setGoal(glm::vec2 center);
 void testCollision();
@@ -66,75 +71,82 @@ int main()
     // Set world
     reset();
 
-    shader = loadShaders("shader/vertex.glsl", "shader/fragment.glsl");
-
+    shader = loadShaders("shader/shader.vert", "shader/shader.frag");
+#ifdef __EMSCRIPTEN__
+    emscripten_set_main_loop(loop, 0, 1);
+#else
     while (!mainWindow.getShouldClose())
     {
-        testCollision();
-        goalCollision();
-
-        if (mainWindow.getKeys()[32])
-        {
-            reset();
-        } // space to reset (backdoor)
-
-        float now = glfwGetTime();  // SDL_GetPerformanceCounter();
-        deltaTime = now - lastTime; // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
-        lastTime = now;
-
-        yacht.turnEngine(mainWindow.getKeys()[265]);
-        if (mainWindow.getKeys()[263])
-            yacht.turnToPort();
-        if (mainWindow.getKeys()[262])
-            yacht.turnToStarboard();
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glUseProgram(shader);
-        u_model = glGetUniformLocation(shader, "model");
-        u_projection = glGetUniformLocation(shader, "projection");
-
-        glm::mat4 projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
-        glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
-
-        glm::mat4 model(1.0f);
-
-        // Render Goal
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-        goal.renderMesh();
-
-        // Render obstacles
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-        for (int i = 0; i < NUM_OF_OBSTACLES; i++)
-        {
-            obstacleList[i].renderMesh();
-        }
-
-        // Render Yacht
-        model = yacht.getModelMatrix(deltaTime, worldWind);
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-        yacht.renderMesh();
-
-        // Render Mast
-        model = model * mast.getModelMatrix(yacht.getMastAngle(worldWind));
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-        mast.renderMesh();
-
-        // Render Vane
-        glm::mat4 vaneModel(1.0f);
-        vaneModel = vaneModel * vane.getModelMatrix(yacht.getCurPos(), worldWind);
-        glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(vaneModel));
-        vane.renderMesh();
-
-        glUseProgram(0);
-
-        mainWindow.swapBuffers();
-        glfwPollEvents();
-    };
-
+        loop();
+    }
     glDeleteProgram(shader);
     mainWindow.terminateWindow();
+#endif
 
     return 0;
+}
+
+void loop()
+{
+    testCollision();
+    goalCollision();
+
+    if (mainWindow.getKeys()[32])
+    {
+        reset();
+    } // space to reset (backdoor)
+
+    float now = glfwGetTime();  // SDL_GetPerformanceCounter();
+    deltaTime = now - lastTime; // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
+    lastTime = now;
+
+    yacht.turnEngine(mainWindow.getKeys()[265]);
+    if (mainWindow.getKeys()[263])
+        yacht.turnToPort();
+    if (mainWindow.getKeys()[262])
+        yacht.turnToStarboard();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glUseProgram(shader);
+    u_model = glGetUniformLocation(shader, "model");
+    u_projection = glGetUniformLocation(shader, "projection");
+
+    glm::mat4 projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
+    glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
+
+    glm::mat4 model(1.0f);
+
+    // Render Goal
+    glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+    goal.renderMesh();
+
+    // Render obstacles
+    glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+    for (int i = 0; i < NUM_OF_OBSTACLES; i++)
+    {
+        obstacleList[i].renderMesh();
+    }
+
+    // Render Yacht
+    model = yacht.getModelMatrix(deltaTime, worldWind);
+    glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+    yacht.renderMesh();
+
+    // Render Mast
+    model = model * mast.getModelMatrix(yacht.getMastAngle(worldWind));
+    glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+    mast.renderMesh();
+
+    // Render Vane
+    glm::mat4 vaneModel(1.0f);
+    vaneModel = vaneModel * vane.getModelMatrix(yacht.getCurPos(), worldWind);
+    glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(vaneModel));
+    vane.renderMesh();
+
+    glUseProgram(0);
+
+    mainWindow.swapBuffers();
+    glfwPollEvents();
 }
 
 void setObstacles()

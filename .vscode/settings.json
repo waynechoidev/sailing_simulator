@@ -52,5 +52,6 @@
         "typeinfo": "cpp"
     },
     "editor.formatOnSave": true,
-    "editor.defaultFormatter": "ms-vscode.cpptools"
+    "editor.defaultFormatter": "ms-vscode.cpptools",
+    "liveServer.settings.port": 5501
 }
