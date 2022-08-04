@@ -50,7 +50,7 @@ glm::vec2 Yacht::getDrag(float deltaTime)
 
     if (glm::length(_prevVelocity) > 0)
     {
-        glm::vec2 froudeNumber = _prevVelocity * 0.2f;
+        glm::vec2 froudeNumber = _prevVelocity * 0.6f;
         drag = froudeNumber * deltaTime;
     }
     else
