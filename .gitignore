@@ -45,7 +45,8 @@ CTestTestfile.cmake
 _deps
 
 # Build Folder
-out/build/
+build
+wasm_build
 
 # everything called a build folder
 [Bb][Uu][Ii][Ll][Dd]/
