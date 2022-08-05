@@ -15,6 +15,8 @@ add_executable(sailing_simulator
     src/vane.cpp
     src/goal.h
     src/goal.cpp
+    src/camera.h
+    src/camera.cpp
     engine/shader_loader.h
     engine/shader_loader.cpp
     engine/window.h

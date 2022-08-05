@@ -151,17 +151,3 @@ bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
     else
         return true;
 }
-
-bool Yacht::testCollisionWithWall()
-{
-    glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
-    if (circlePos.x - CIRCLE_RADIUS <= -80.0f)
-        return true;
-    if (circlePos.x + CIRCLE_RADIUS >= 80.0f)
-        return true;
-    if (circlePos.y - CIRCLE_RADIUS <= -60.0f)
-        return true;
-    if (circlePos.y + CIRCLE_RADIUS >= 60.0f)
-        return true;
-    return false;
-}

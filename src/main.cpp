@@ -7,6 +7,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../engine/window.h"
 #include "../engine/shader_loader.h"
+#include "camera.h"
 #include "yacht.h"
 #include "mast.h"
 #include "obstacle.h"
@@ -22,8 +23,10 @@
 std::random_device rd;
 std::mt19937 gen(rd());
 Window mainWindow;
-GLuint shader, u_model, u_projection;
+GLuint shader, u_model, u_projection, u_view;
+glm::mat4 projection, view;
 Yacht yacht;
+Camera camera;
 Mast mast;
 Obstacle obstacle;
 Vane vane;
@@ -62,6 +65,7 @@ int main()
 
     mainWindow = Window(800, 600, "Sailing Simulation");
     mainWindow.initialise();
+    camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f));
 
     // Create Meshes
     yacht.createYacht();
@@ -72,6 +76,9 @@ int main()
     reset();
 
     shader = loadShaders("shader/shader.vert", "shader/shader.frag");
+    u_model = glGetUniformLocation(shader, "model");
+    u_projection = glGetUniformLocation(shader, "projection");
+    u_view = glGetUniformLocation(shader, "view");
 #ifdef __EMSCRIPTEN__
     emscripten_set_main_loop(loop, 0, 1);
 #else
@@ -108,11 +115,21 @@ void loop()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glUseProgram(shader);
-    u_model = glGetUniformLocation(shader, "model");
-    u_projection = glGetUniformLocation(shader, "projection");
 
-    glm::mat4 projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
+    glm::vec2 curPos = yacht.getCurPos();
+    camera.update(glm::vec3(curPos, 0.0f));
+    if (mainWindow.getKeys()[87])
+    {
+        projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
+        view = glm::mat4(1.0f);
+    }
+    else
+    {
+        projection = glm::perspective(50.0f, 80.0f / 60.0f, 0.1f, 10000.0f);
+        view = camera.calculateViewMatrix();
+    }
     glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(u_view, 1, GL_FALSE, glm::value_ptr(view));
 
     glm::mat4 model(1.0f);
 
@@ -188,11 +205,6 @@ void testCollision()
             yacht.crash();
             break;
         }
-    }
-    if (yacht.testCollisionWithWall())
-    {
-        std::cout << "Do not go that far!!" << std::endl;
-        yacht.crash();
     }
 }
 
