@@ -3,7 +3,7 @@
     "wasm": "mkdir -p wasm_build && cd wasm_build && emcmake cmake .. && make && cp sailing_simulator.js sailing_simulator.wasm sailing_simulator.data ../web/public -f",
     "build":"cd web && npm run build",
     "dev" : "cd web && npm run dev",
-    "start": "cd web && next run start",
+    "start": "cd web && npm run start",
     "native_build":"mkdir -p build && cd build && cmake .. && make",
     "native_start":"cd build && ./sailing_simulator"
   }
