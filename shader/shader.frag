@@ -3,11 +3,14 @@ precision mediump float;
 precision mediump int;
 precision mediump sampler2DArray;
 
-in vec3 fragmentColor;
+in vec4 vCol;
+in vec2 TexCoord;
 
-out vec4 color;
+out vec4 colour;
+
+uniform sampler2D theTexture;
 
 void main()
 {
-	color = vec4(fragmentColor, 1.0);
+	colour = texture(theTexture, TexCoord);
 }

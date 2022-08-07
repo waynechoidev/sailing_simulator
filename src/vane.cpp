@@ -6,7 +6,7 @@
 
 void Vane::createVane()
 {
-    createMesh(_vertices, _colors, _indices, sizeof(_vertices), sizeof(_indices));
+    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4

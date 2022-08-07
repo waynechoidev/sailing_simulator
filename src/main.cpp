@@ -1,3 +1,5 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <vector>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -7,7 +9,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../engine/window.h"
 #include "../engine/shader_loader.h"
-#include "camera.h"
+#include "../engine/texture.h"
+#include "../engine/model.h"
+#include "../engine/camera.h"
 #include "yacht.h"
 #include "mast.h"
 #include "obstacle.h"
@@ -30,6 +34,7 @@ Camera camera;
 Mast mast;
 Obstacle obstacle;
 Vane vane;
+Texture grass, red;
 const int NUM_OF_OBSTACLES = 20;
 struct AABB
 {
@@ -53,6 +58,8 @@ glm::vec2 worldWind = {0.0f, 5.0f};
 float deltaTime = 0.0f;
 float lastTime = 0.0f;
 
+Model boat;
+
 void loop();
 void setObstacles();
 void setGoal(glm::vec2 center);
@@ -66,6 +73,14 @@ int main()
     mainWindow = Window(800, 600, "Sailing Simulation");
     mainWindow.initialise();
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f));
+
+    grass = Texture("textures/grass.jpg");
+    grass.loadTextureRGB();
+    red = Texture("textures/grass.jpg");
+    red.loadTextureRGB();
+
+    boat = Model();
+    boat.loadModel("models/uh60.obj");
 
     // Create Meshes
     yacht.createYacht();
@@ -120,12 +135,12 @@ void loop()
     camera.update(glm::vec3(curPos, 0.0f));
     if (mainWindow.getKeys()[87])
     {
-        projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -1.0f, 1.0f);
+        projection = glm::ortho(-80.0f, 80.0f, -60.0f, 60.0f, -100.0f, 100.0f);
         view = glm::mat4(1.0f);
     }
     else
     {
-        projection = glm::perspective(50.0f, 80.0f / 60.0f, 0.1f, 10000.0f);
+        projection = glm::perspective(50.0f, 80.0f / 60.0f, 0.1f, 1000.0f);
         view = camera.calculateViewMatrix();
     }
     glUniformMatrix4fv(u_projection, 1, GL_FALSE, glm::value_ptr(projection));
@@ -147,11 +162,16 @@ void loop()
     // Render Yacht
     model = yacht.getModelMatrix(deltaTime, worldWind);
     glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
-    yacht.renderMesh();
+    red.useTexture();
+    // yacht.renderMesh();
+
+    glUniform1f(4.0f, 256);
+    boat.renderModel();
 
     // Render Mast
     model = model * mast.getModelMatrix(yacht.getMastAngle(worldWind));
     glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
+    grass.useTexture();
     mast.renderMesh();
 
     // Render Vane

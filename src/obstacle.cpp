@@ -6,17 +6,11 @@ void Obstacle::createObstacle(glm::vec2 center, glm::vec2 length)
         0, 1, 2,
         0, 2, 3};
 
-    GLfloat vertices[12] = {
-        center.x - length.x / 2.0f, center.y - length.y / 2.0f, 0.1f,
-        center.x + length.x / 2.0f, center.y - length.y / 2.0f, 0.1f,
-        center.x + length.x / 2.0f, center.y + length.y / 2.0f, 0.1f,
-        center.x - length.x / 2.0f, center.y + length.y / 2.0f, 0.1f};
+    GLfloat vertices[32] = {
+        center.x - length.x / 2.0f, center.y - length.y / 2.0f, 0.1f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        center.x + length.x / 2.0f, center.y - length.y / 2.0f, 0.1f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        center.x + length.x / 2.0f, center.y + length.y / 2.0f, 0.1f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        center.x - length.x / 2.0f, center.y + length.y / 2.0f, 0.1f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
 
-    GLfloat colors[12] = {
-        0.02f, 0.3f, 0.21f,
-        0.02f, 0.3f, 0.21f,
-        0.02f, 0.3f, 0.21f,
-        0.02f, 0.3f, 0.21f};
-
-    createMesh(vertices, colors, indices, sizeof(vertices), sizeof(indices));
+    createMesh(vertices, indices, sizeof(vertices), sizeof(indices));
 }

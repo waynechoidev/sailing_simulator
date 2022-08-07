@@ -1,10 +1,13 @@
 #include "yacht.h"
 #include <iostream>
 #include <cstring>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 void Yacht::createYacht()
 {
-    createMesh(_vertices, _colors, _indices, sizeof(_vertices), sizeof(_indices));
+    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
 }
 
 glm::mat4

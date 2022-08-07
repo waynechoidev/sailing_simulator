@@ -3,8 +3,6 @@ project(sailing_simulator)
 
 add_executable(sailing_simulator
     src/main.cpp
-    src/app.h
-    src/app.cpp
     src/yacht.h
     src/yacht.cpp
     src/mast.h
@@ -15,14 +13,18 @@ add_executable(sailing_simulator
     src/vane.cpp
     src/goal.h
     src/goal.cpp
-    src/camera.h
-    src/camera.cpp
     engine/shader_loader.h
     engine/shader_loader.cpp
     engine/window.h
     engine/window.cpp
     engine/mesh.h
     engine/mesh.cpp
+    engine/texture.h
+    engine/texture.cpp
+    engine/model.h
+    engine/model.cpp
+    engine/camera.h
+    engine/camera.cpp
 )
 
 if (EMSCRIPTEN)
@@ -51,10 +53,29 @@ endif()
 add_subdirectory(external/glm EXCLUDE_FROM_ALL)
 target_link_libraries(${PROJECT_NAME} PRIVATE glm)
 
+# assimp
+add_subdirectory(external/assimp EXCLUDE_FROM_ALL)
+target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
+
+# stb
+include_directories(external/stb)
+
 # add shader
 foreach(file "shader/shader.frag" "shader/shader.vert")
     configure_file(${file} ${file})
   endforeach(file)
+
+add_custom_command(
+   TARGET ${PROJECT_NAME} PRE_BUILD
+   COMMAND ${CMAKE_COMMAND} -E create_symlink
+           ${CMAKE_SOURCE_DIR}/textures
+           ${CMAKE_CURRENT_BINARY_DIR}/textures)
+
+add_custom_command(
+   TARGET ${PROJECT_NAME} PRE_BUILD
+   COMMAND ${CMAKE_COMMAND} -E create_symlink
+           ${CMAKE_SOURCE_DIR}/models
+           ${CMAKE_CURRENT_BINARY_DIR}/models)
 
 target_include_directories(${PROJECT_NAME}
   PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src

@@ -3,19 +3,21 @@ precision mediump float;
 precision mediump int;
 precision mediump sampler2DArray;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
-
-// Input vertex data, different for all executions of this shader.
 in vec3 pos;
-in vec3 color;
+in vec2 tex;
 
-out vec3 fragmentColor;
+out vec4 vCol;
+out vec2 TexCoord;
+
+uniform mat4 model;
+uniform mat4 projection;
+uniform mat4 view;
 
 void main(){
 
 	gl_Position = projection * view * model * vec4(pos, 1.0);
-	fragmentColor = color;
+	vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);
+	
+	TexCoord = tex;
 }
 
