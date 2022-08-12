@@ -154,3 +154,8 @@ bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
     else
         return true;
 }
+
+void Yacht::crash()
+{
+    _prevVelocity = _prevVelocity * -1.0f;
+}

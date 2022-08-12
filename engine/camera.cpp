@@ -15,7 +15,7 @@ glm::mat4 Camera::calculateViewMatrix()
 
 void Camera::update(glm::vec3 startTarget)
 {
-	position = {startTarget.x - 25.0f, startTarget.y - 25.0f, 50.0f};
+	position = {startTarget.x, startTarget.y - 100.0f, 200.0f};
 	target = startTarget;
 }
 

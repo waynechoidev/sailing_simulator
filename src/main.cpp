@@ -80,7 +80,7 @@ int main()
     red.loadTextureRGB();
 
     boat = Model();
-    boat.loadModel("models/uh60.obj");
+    boat.loadModel("models/boats2.obj");
 
     // Create Meshes
     yacht.createYacht();

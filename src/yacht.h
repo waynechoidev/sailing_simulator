@@ -21,11 +21,7 @@ public:
     bool testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
     bool testCollisionWithWall();
     glm::vec2 getCurPos() { return _curPos; }
-
-    void crash()
-    {
-        _prevVelocity = _prevVelocity * -1.0f;
-    }
+    void crash();
 
 private:
     void initialize();
