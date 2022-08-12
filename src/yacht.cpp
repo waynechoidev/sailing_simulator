@@ -7,7 +7,7 @@
 
 void Yacht::createYacht()
 {
-    createMesh(_vertices, _indices, sizeof(_vertices), sizeof(_indices));
+    createMesh(&_vertices[0], &_indices[0], _vertices.size(), _indices.size());
 }
 
 glm::mat4
@@ -127,7 +127,7 @@ void Yacht::reset(glm::vec2 pos, float dirAngle)
     _curDirVec = glm::rotate(_curDirVec, glm::radians(dirAngle));
 }
 
-bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
+void Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
 {
     // Detect collision between obstacles(AABB) and yacht(Circle)
     glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
@@ -149,13 +149,42 @@ bool Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
 
     glm::vec2 dist = circlePos - boxPoint;
 
-    if (glm::length(dist) >= CIRCLE_RADIUS)
-        return false;
-    else
-        return true;
+    // if (glm::length(dist) <= CIRCLE_RADIUS * 1.5)
+    //     _prevVelocity = _prevVelocity * 0.95f;
+    // else if (glm::length(dist) <= CIRCLE_RADIUS)
+    // {
+    //     _prevVelocity = _prevVelocity * -1.0f;
+    //     std::cout << "crash!!" << std::endl;
+    // }
+
+    if (glm::length(dist) <= CIRCLE_RADIUS)
+    {
+        _prevVelocity = _prevVelocity * -1.0f;
+        std::cout << "crash!!" << std::endl;
+    }
 }
 
-void Yacht::crash()
+bool Yacht::testGoal(glm::vec2 boxCenter, glm::vec2 boxLength)
 {
-    _prevVelocity = _prevVelocity * -1.0f;
+    // Detect collision between obstacles(AABB) and yacht(Circle)
+    glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
+    glm::vec2 boxPoint;
+
+    if (circlePos.x < boxCenter.x - boxLength.x / 2.0f)
+        boxPoint.x = boxCenter.x - boxLength.x / 2.0f;
+    else if (circlePos.x > boxCenter.x + boxLength.x / 2.0f)
+        boxPoint.x = boxCenter.x + boxLength.x / 2.0f;
+    else
+        boxPoint.x = circlePos.x;
+
+    if (circlePos.y < boxCenter.y - boxLength.y / 2.0f)
+        boxPoint.y = boxCenter.y - boxLength.y / 2.0f;
+    else if (circlePos.y > boxCenter.y + boxLength.y / 2.0f)
+        boxPoint.y = boxCenter.y + boxLength.y / 2.0f;
+    else
+        boxPoint.y = circlePos.y;
+
+    glm::vec2 dist = circlePos - boxPoint;
+
+    return (glm::length(dist) <= CIRCLE_RADIUS);
 }

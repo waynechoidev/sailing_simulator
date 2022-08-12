@@ -218,20 +218,13 @@ void setGoal(glm::vec2 center)
 void testCollision()
 {
     for (int i = 0; i < NUM_OF_OBSTACLES; i++)
-    {
-        if (yacht.testCollision(obstacleAABBList[i].center, obstacleAABBList[i].length))
-        {
-            std::cout << "crash!!" << std::endl;
-            yacht.crash();
-            break;
-        }
-    }
+        yacht.testCollision(obstacleAABBList[i].center, obstacleAABBList[i].length);
 }
 
 void goalCollision()
 {
 
-    if (yacht.testCollision(goalAABB.center, goalAABB.length))
+    if (yacht.testGoal(goalAABB.center, goalAABB.length))
     {
         std::cout << "Success!!" << std::endl;
         reset();

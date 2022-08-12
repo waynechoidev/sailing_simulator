@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
-
+#include <vector>
 #include "../engine/mesh.h"
 
 class Yacht : public Mesh
@@ -18,10 +18,9 @@ public:
     void turnToStarboard();
     void turnEngine(bool isOn) { _isEngineOn = isOn; }
     float getMastAngle(glm::vec2 worldWind);
-    bool testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
-    bool testCollisionWithWall();
+    void testCollision(glm::vec2 boxCenter, glm::vec2 boxLength);
+    bool testGoal(glm::vec2 boxCenter, glm::vec2 boxLength);
     glm::vec2 getCurPos() { return _curPos; }
-    void crash();
 
 private:
     void initialize();
@@ -31,15 +30,15 @@ private:
     float getCurDir();
 
 private:
-    unsigned int _indices[9] = {
+    std::vector<unsigned int> _indices = {
         0, 1, 2,
         2, 3, 4,
         0, 2, 4};
-    GLfloat _vertices[40] = {
+    std::vector<GLfloat> _vertices = {
         -1.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 2.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 4.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.2f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 2.0f, 0.2f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 4.0f, 0.2f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
         -1.0f, 2.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
     glm::vec2 _curPos = {0.0f, 0.0f};
@@ -52,5 +51,5 @@ private:
     const glm::vec2 ZERO = {0.0f, 1.0f};
 
     float MAX_SPEED = 10.0f;
-    float CIRCLE_RADIUS = 1.0f;
+    float CIRCLE_RADIUS = 2.0f;
 };
