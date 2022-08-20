@@ -177,7 +177,7 @@ void Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
 
     if (glm::length(dist) < CIRCLE_RADIUS)
     {
-        _prevVelocity = glm::vec2{_prevVelocity.x * normal.x, _prevVelocity.y * normal.y};
+        _prevVelocity = glm::vec2{_prevVelocity.x * normal.x * COR, _prevVelocity.y * normal.y * COR};
 
         if (translateFactor.x != 0.0f && translateFactor.y != 0.0f)
         {
