@@ -163,10 +163,11 @@ void loop()
     model = yacht.getModelMatrix(deltaTime, worldWind);
     glUniformMatrix4fv(u_model, 1, GL_FALSE, glm::value_ptr(model));
     red.useTexture();
-    // yacht.renderMesh();
+    yacht.renderMesh();
 
-    glUniform1f(4.0f, 256);
-    boat.renderModel();
+    // Render Model
+    // glUniform1f(4.0f, 256);
+    // boat.renderModel();
 
     // Render Mast
     model = model * mast.getModelMatrix(yacht.getMastAngle(worldWind));

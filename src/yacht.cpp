@@ -130,36 +130,62 @@ void Yacht::reset(glm::vec2 pos, float dirAngle)
 void Yacht::testCollision(glm::vec2 boxCenter, glm::vec2 boxLength)
 {
     // Detect collision between obstacles(AABB) and yacht(Circle)
-    glm::vec2 circlePos = {_curPos.x, _curPos.y + 2.0f};
+    glm::vec2 circlePos = {_curPos.x, _curPos.y};
     glm::vec2 boxPoint;
 
+    glm::vec2 normal;
+    glm::vec2 translateFactor;
+
     if (circlePos.x < boxCenter.x - boxLength.x / 2.0f)
+    {
         boxPoint.x = boxCenter.x - boxLength.x / 2.0f;
+        translateFactor.x = -1.0f;
+    }
     else if (circlePos.x > boxCenter.x + boxLength.x / 2.0f)
+    {
         boxPoint.x = boxCenter.x + boxLength.x / 2.0f;
+        normal.x = -1.0f;
+        translateFactor.x = 1.0f;
+    }
     else
+    {
         boxPoint.x = circlePos.x;
+        normal.x = 1.0f;
+        translateFactor.x = 0.0f;
+    }
 
     if (circlePos.y < boxCenter.y - boxLength.y / 2.0f)
+    {
         boxPoint.y = boxCenter.y - boxLength.y / 2.0f;
+        normal.y = -1.0f;
+        translateFactor.y = -1.0f;
+    }
     else if (circlePos.y > boxCenter.y + boxLength.y / 2.0f)
+    {
         boxPoint.y = boxCenter.y + boxLength.y / 2.0f;
+        normal.y = -1.0f;
+        translateFactor.y = 1.0f;
+    }
     else
+    {
         boxPoint.y = circlePos.y;
+        normal.y = 1.0f;
+        translateFactor.y = 0.0f;
+    }
 
     glm::vec2 dist = circlePos - boxPoint;
 
-    // if (glm::length(dist) <= CIRCLE_RADIUS * 1.5)
-    //     _prevVelocity = _prevVelocity * 0.95f;
-    // else if (glm::length(dist) <= CIRCLE_RADIUS)
-    // {
-    //     _prevVelocity = _prevVelocity * -1.0f;
-    //     std::cout << "crash!!" << std::endl;
-    // }
-
-    if (glm::length(dist) <= CIRCLE_RADIUS)
+    if (glm::length(dist) < CIRCLE_RADIUS)
     {
-        _prevVelocity = _prevVelocity * -1.0f;
+        _prevVelocity = glm::vec2{_prevVelocity.x * normal.x, _prevVelocity.y * normal.y};
+
+        if (translateFactor.x != 0.0f && translateFactor.y != 0.0f)
+        {
+            translateFactor = translateFactor * 0.71f; // cos 45;
+        }
+
+        circlePos = boxPoint + CIRCLE_RADIUS * translateFactor;
+        _curPos = {circlePos.x, circlePos.y};
         std::cout << "crash!!" << std::endl;
     }
 }

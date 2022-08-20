@@ -35,11 +35,11 @@ private:
         2, 3, 4,
         0, 2, 4};
     std::vector<GLfloat> _vertices = {
-        -1.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 0.0f, 0.2f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, 2.0f, 0.2f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 4.0f, 0.2f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        -1.0f, 2.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+        -1.0f, -2.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, -2.0f, 0.2f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, 0.2f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 2.0f, 0.2f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.2f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
     glm::vec2 _curPos = {0.0f, 0.0f};
     float _prevAppWindAngle = 0.0f; // degrees
@@ -52,4 +52,5 @@ private:
 
     float MAX_SPEED = 10.0f;
     float CIRCLE_RADIUS = 2.0f;
+    float COR = 0.5f; // coefficient of restitution
 };
